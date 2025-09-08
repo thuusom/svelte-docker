@@ -11,11 +11,11 @@ COPY package.json package-lock.json /temp/prod/
 RUN cd /temp/prod && npm install --frozen-lockfile --production
 
 FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
+COPY --from=install /temp/prod/node_modules node_modules
 COPY . .
 
-ENV NODE_ENV=development
-RUN npm run build --dev 
+ENV NODE_ENV=production
+RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:1.26.2-alpine AS release
 COPY --from=prerelease --chown=nginx:nginx /usr/src/app/build /usr/share/nginx/html
